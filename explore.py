@@ -1,6 +1,7 @@
 import acquire
 import prepare
 import pandas as pd
+import numpy as np
 import os
 
 
@@ -40,3 +41,15 @@ def get_q6_eda_df():
     df = df.drop(columns=(['date', 'time']))
     return df
 
+def get_upper_bound_and_difference(series, multiplier = 1.5):
+    '''
+    Gets the upper bound and its difference from the max of a series based on the InterQuartile Range and a multiplier. Default multiplier is 1.5
+    '''
+    q1, q3 = series.quantile([.25, .75])
+    iqr = q3 - q1
+    
+    upper = q3 + (multiplier * iqr)
+    difference = series.max() - upper
+    
+    print(f'{series.name}\'s Upper bound is {round(upper, 2)}, and difference from max is {round(difference, 2)}')
+    return upper, difference
