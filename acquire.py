@@ -4,6 +4,10 @@ import numpy as np
 from env import get_db_url
 import os
 
+
+
+
+
 def get_log_data():
 
     '''

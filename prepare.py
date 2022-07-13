@@ -1,6 +1,18 @@
+
+# FUNCTIONS in this prepare.py:
+
+# prepare_logs(): SQL query to obtain data, removes uneeded columns, creates CSV
+# get_q6_eda(): converts DTG columns from strings to DTG types for EDA 
+# wrangle_logs(): combines the two prior functions
+# q2_df_prep(df): prepares a new dataframe for question 2
+
+#______________________________________________________________________________________________________________________________________________________
+
 import acquire
 import pandas as pd
 import os
+
+#1._____________________________________________________________________________________________________________________________________________________
 
 def prepare_logs(use_cache=True):
     """This function takes in the DataFrame from the get_log_data function located in the acquire file.
@@ -38,6 +50,32 @@ def prepare_logs(use_cache=True):
     return df
 
 
+#2.______________________________________________________________________________________________________________________________________________________
+
+def get_q6_eda_df():
+    '''This function converts the column types in the CSV from object to the correct type. 
+    Using the CSV cached locally results in dates saved as 'object; instead of datetimes'''
+
+    df = prepare_logs()
+    df.date_time = pd.to_datetime(df.date_time)
+      # convert dates to DTG
+    dates = ['start_date', 'end_date', 'created_at', 'updated_at']
+    for col in dates:
+        df[col] = pd.to_datetime(df[col])
+        # drop unnecessary columns
+    return df
+
+
+#3.______________________________________________________________________________________________________________________________________________________
+
+def wrangle_logs():
+    df = prepare_logs()
+    df = get_q6_eda_df()
+    return df
+
+
+#4.______________________________________________________________________________________________________________________________________________________
+
 def q2_df_prep(df):
     '''
     Creates a new dataframe for question 2,
@@ -73,16 +111,3 @@ def q2_df_prep(df):
     df2 = df.copy()
     df2 = df2.rename(columns={'name': 'cohort', 'program_id': 'programs'})
     return df2
-
-
-def get_q6_eda_df():
-    '''This function converts the column types in the CSV from object to the correct type. Using the CSV cached locally results in dates saved as 'object; instead of datetimes'''
-    
-    df = prepare_logs()
-    df.date_time = pd.to_datetime(df.date_time)
-      # convert dates to DTG
-    dates = ['start_date', 'end_date', 'created_at', 'updated_at']
-    for col in dates:
-        df[col] = pd.to_datetime(df[col])
-        # drop unnecessary columns
-    return df
